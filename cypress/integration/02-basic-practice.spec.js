@@ -36,20 +36,52 @@ describe('Basic Practice', () => {
   });
 
   describe('Filtering items', () => {
-    it('should show items that match whatever is in the filter field', () => {});
+    it('should show items that match whatever is in the filter field', () => {
+      cy.get('[data-test="filter-items"]').type("Tooth");
 
-    it('should hide items that do not match whatever is in the filter field', () => {});
+      // cy.contains('Tooth Brush')
+      // cy.contains('Tooth Paste')
+
+      // alternative
+      cy.get('[data-test="items"] li').each(($item) => {
+       expect($item.text()).to.include('Tooth');
+      });
+    });
+
+    it('should hide items that do not match whatever is in the filter field', () => {
+      cy.get('[data-test="filter-items"]').type("Tooth");
+
+      cy.get('Hoodies').should('not.exist');
+    });
   });
 
   describe('Removing items', () => {
     describe('Remove all', () => {
-      it('should remove all of the items', () => {});
+      it('should remove all of the items', () => {
+        cy.get('[data-test="remove-all"]').click();
+        // cy.get('[data-test="items-unpacked"]').contains('No items to show');
+        // cy.get('[data-test="items-packed"]').contains('No items to show');
+        cy.get('[data-test="items"] li').should('not.exist');
+      });
     });
 
     describe('Remove individual items', () => {
-      it('should have a remove button on an item', () => {});
+      it('should have a remove button on an item', () => {
+        cy.get('[data-test="items"] li').find('[data-test="remove"]');
+      });
+      
+      it('should have a remove button on each (literally)', () => {
+        cy.get('[data-test="items"] li').each((li) => {
+          cy.wrap(li).find('[data-test="remove"]').should('exist');
+        });
+      });
 
-      it('should remove an item from the page', () => {});
+      it('should remove an element from the page (better)', () => {
+        cy.get('[data-test="items"] li')
+          .first()
+          .within(() => cy.get('[data-test="remove"]').click())
+          .should('not.exist');
+      });
     });
   });
 
