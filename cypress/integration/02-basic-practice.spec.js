@@ -86,12 +86,27 @@ describe('Basic Practice', () => {
   });
 
   describe('Mark all as unpacked', () => {
-    it('should empty out the "Packed" list', () => {});
+    it('should empty out the "Packed" list', () => {
+      cy.get('[data-test="mark-all-as-unpacked"]').click();
+      cy.get('[data-test="items-packed"] li').should('not.exist');
+    });
 
-    it('should empty have all of the items in the "Unpacked" list', () => {});
+    it('should empty have all of the items in the "Unpacked" list', () => {
+      cy.get('[data-test="items"] li').its('length').then((count) => {
+        cy.get('[data-test="mark-all-as-unpacked"]').click();
+        cy.get('[data-test="items-unpacked"] li').its('length').should('eq', count);
+      })
+    });
   });
 
   describe('Mark individual item as packed', () => {
-    it('should move an individual item from "Unpacked" to "Packed"', () => {});
+    it('should move an individual item from "Unpacked" to "Packed"', () => {
+      cy.get('[data-test="items"] li label').first()
+      .within(() => cy.get('input[type="checkbox"]').click())
+      .then($item => {
+        const itemText = $item.text();
+        cy.get('[data-test="items-packed"] li label').first().should('have.text', itemText) 
+      })
+    });
   });
 });
