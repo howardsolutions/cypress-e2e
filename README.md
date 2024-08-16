@@ -43,3 +43,4 @@ npx cypress open
 
 - Syntax for assertion and running the test are just `Mocha` and `Chai` 
 
+- In term of E2E test, think in term of WHAT user WILL DO, rather than every other small unit.s

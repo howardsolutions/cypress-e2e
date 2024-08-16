@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /// <reference types="cypress" />
 
 describe('Basic Practice', () => {
@@ -6,11 +7,32 @@ describe('Basic Practice', () => {
   });
 
   describe('Adding a new item', () => {
-    it('should put a new item on the page after clicking on "Add Item"', () => {});
+    it('should put a new item on the page after clicking on "Add Item"', () => {
+      const item = "good attitude";
 
-    it('should put a new item in the "Unpacked Items" list', () => {});
+      cy.get('[data-test="new-item-input"]').type(item);
+      cy.get('[data-test="add-item"]').click();
 
-    it('should put a new item as the last item in the "Unpacked Items" list', () => {});
+      cy.contains(item);
+    });
+
+    it('should put a new item in the "Unpacked Items" list', () => {
+      const item = "good attitude";
+      
+      cy.get('[data-test="new-item-input"]').type(item);
+      cy.get("form").submit();
+
+      cy.get('[data-test="items-unpacked"]').contains(item);
+    });
+
+    it('should put a new item as the last item in the "Unpacked Items" list', () => {
+      const item = "good attitude";
+      
+      cy.get('[data-test="new-item-input"]').type(item);
+      cy.get("form").submit();
+
+      cy.get('[data-test="items-unpacked"] li').last().contains(item);
+    });
   });
 
   describe('Filtering items', () => {
