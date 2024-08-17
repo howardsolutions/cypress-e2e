@@ -39,16 +39,50 @@ describe('Secret Menu Items', () => {
 
   it('should exist have the title on the page', () => {
     cy.get('h1').should('contain', 'Secret Menu Items');
+  });
 
-    for (const property of properties) {
-      it(`should have a column ${property}`, () => {
-        cy.get(`#${property}-column`);
-      });
+  for (const property of properties) {
+    it(`should have a column for ${property}`, () => {
+      cy.get(`#${property}-column`);
+    });
 
-      it(`should hide the ${property} column if unchecked`, () => {
-        cy.get(`#show-${property}`).click();
-        cy.get(`#${property}-column`).should('be.hidden')
+    it(`should have a column for showing the ${property} column`, () => {
+      cy.get(`#show-${property}`);
+    });
+
+    it('should hide the column when the checkbox is unchecked', () => {
+      cy.get(`#show-${property}`).click();
+      cy.get(`#${property}-column`).should('be.hidden');
+    });
+  }
+
+  // For the restaurant
+  describe('Restaurant Filter', () => {
+    beforeEach(() => {
+      cy.get('#restaurant-visibility-filter').as('restaurant-filter');
+    });
+  
+    for (const restaurant of restaurants) {
+      it(`should only display the rows that match ${restaurant} when selected`, () => {
+         cy.get('@restaurant-filter').select(restaurant);
+         cy.get('td[headers="whereToOrder-column"]').should('contain', restaurant);
       })
     }
-  });
+  })
+
+  describe.only('Rating Filter', () => {
+    beforeEach(() => {
+      cy.get('#minimum-rating-visibility').as('min-filter');
+    });
+
+    for (const rating of ratings) {
+      it(`should only display the items with a rating of ${rating} or higher when changed`, () => {
+        cy.get('@min-filter').invoke('val', rating).trigger('change');
+        
+        cy.get('td[headers="popularity-column"]').each(($el) => {
+          expect(+$el.text()).gte(rating);
+        });
+     })
+    }
+  })
 });
