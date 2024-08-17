@@ -3,6 +3,7 @@
 
 describe('Aliases', () => {
   beforeEach(() => {
+    // before go into the page, we refresh the page
     cy.visit('/jetsetter');
 
     cy.get('[data-test="filter-items"]').as('filterInput');
