@@ -69,7 +69,7 @@ describe('Sign Up', () => {
   });
 
   it('should require a password when the email is present', () => {
-    cy.get('@email').type('valid@email.com');
+    cy.get('@email').type('valid@email.com{enter}');
 
     cy.get('[data-test="sign-up-password"]:invalid').invoke('prop', 'validity')
     .its('valueMissing').should('be.true');
