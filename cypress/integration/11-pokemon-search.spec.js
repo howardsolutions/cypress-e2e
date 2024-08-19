@@ -39,13 +39,54 @@ describe('Pokémon Search', () => {
     cy.wait('@api').its('request.url').should('contain', 'name=char');
   });
 
-  it('should render the results to the page', () => {});
+  it('should render the results to the page', () => {
+    cy.intercept('/pokemon-search/api?*', { pokemon }).as('stubbed-api');
+    cy.get('@search').type('ivy');
+    
+    cy.wait('@stubbed-api');
+    cy.get('[data-test="results"]').should('have.length', 3);
+  });
 
-  it('should link to the correct pokémon', () => {});
+  it('should link to the correct pokémon', () => {
+    cy.intercept('/pokemon-search/api?*', { pokemon }).as('stubbed-api');
 
-  it('should persist the query parameter in the link to a pokémon', () => {});
+    cy.get('@search').type('ivy');
+    cy.wait('@stubbed-api');
 
-  it('should bring you to the route for the correct pokémon', () => {});
+    cy.get('[data-test="results"] a').each(($el, idx) => {
+      const {id} = pokemon[idx];
+      expect($el.attr('href').to.contain('/pokemon-search/ ' + id));
+    });
+  });
 
-  it('should immediately fetch a pokémon if a query parameter is provided', () => {});
+  it('should persist the query parameter in the link to a pokémon', () => {
+    cy.intercept('/pokemon-search/api?*', { pokemon }).as('stubbed-api');
+
+    cy.get('@search').type('lol');
+    cy.wait('@stubbed-api');
+    
+    cy.get('[data-test="results"] a').each(($el) => {
+      expect($el.attr('href').to.contain('?name=lol'));
+    });
+  });
+
+  it('should bring you to the route for the correct pokémon', () => {
+    cy.intercept('/pokemon-search/api?*', { pokemon }).as('stubbed-api');
+    cy.intercept('/pokemon-search/api/1', { fixture: 'bulbasaur.json' }).as('individual-api');
+
+    cy.get('@search').type('bulba');
+    cy.wait('@stubbed-api');
+
+    cy.get('[data-test="result"] a').first().click();
+    cy.wait('@individual-api');
+
+    cy.location('pathname').should('contain', '/pokemon-search/1');
+  });
+
+  it('should immediately fetch a pokémon if a query parameter is provided', () => {
+    cy.intercept('/pokemon-search/api?*', { pokemon }).as('stubbed-api');
+    cy.visit({ url: '/pokemon-search', qs: { name: 'bulba' } });
+
+    cy.wait('@individual-api').its('response.url').should('contain', '?name=bulba');
+  });
 });
