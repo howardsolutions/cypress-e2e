@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+/* eslint-disable no-undef */
 /// <reference types="cypress" />
 
 import '../support/commands-complete';
